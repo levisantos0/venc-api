@@ -1,2 +1,3 @@
-# venc-api
-Api de anúncios para meu tcc
+# User-service
+
+API de gestão de usuários do meu TCC
