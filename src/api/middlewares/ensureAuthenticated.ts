@@ -20,6 +20,10 @@ export class EnsureAuthenticatedMiddleware {
     next: NextFunction
   ) => {
     const authToken = request.headers.authorization;
+    if (!authToken) {
+      throw new UnauthorizedError("Missing authorization header");
+    }
+
     const [, token] = authToken.split(" ");
 
     if (!token || token === "") {
