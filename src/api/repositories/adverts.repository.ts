@@ -49,12 +49,16 @@ export class AdvertsRepository {
   }
 
   async getAll(searchParams: SearchParams): Promise<PaginatedResult<Adverts>> {
-    let { page, perPage } = searchParams;
+    let { page, perPage, sortByPrice } = searchParams;
     try {
       const query = await this.repository
         .createQueryBuilder("adv")
         .leftJoinAndSelect("adv.advertsImages", "advertsImages")
         .leftJoinAndSelect("adv.category", "categories");
+
+      if (sortByPrice) {
+        query.orderBy(`adv.price`, sortByPrice);
+      }
 
       if (page && perPage) {
         const correctPage = --page;
@@ -99,7 +103,7 @@ export class AdvertsRepository {
       await this.repository
         .createQueryBuilder()
         .update(data)
-        .where({ id: advertId })
+        .where(`id = :id`, { id: advertId })
         .returning("*")
         .execute();
     } catch (error) {

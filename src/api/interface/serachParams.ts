@@ -1,5 +1,5 @@
 export interface SearchParams {
-  sort?: string;
+  sortByPrice?: "ASC" | "DESC";
   page?: number;
   perPage?: number;
 }
