@@ -53,7 +53,7 @@ export class AdvertsRepository {
   async getAll(searchParams: SearchParams): Promise<PaginatedResult<Adverts>> {
     let { page, perPage, sortByPrice } = searchParams;
     try {
-      const query = await this.repository
+      const query = this.repository
         .createQueryBuilder("adv")
         .leftJoinAndSelect("adv.advertsImages", "advertsImages")
         .leftJoinAndSelect("adv.category", "categories");
@@ -88,13 +88,13 @@ export class AdvertsRepository {
 
   async getOneById(id: number) {
     try {
-      const advert = await this.repository
+      const advert = this.repository
         .createQueryBuilder("adv")
         .leftJoinAndSelect("adv.advertsImages", "advertsImages")
         .leftJoinAndSelect("adv.category", "categories")
         .where("adv.id = :id", { id })
         .take(1);
-      return advert.getMany();
+      return await advert.getMany();
     } catch (error) {
       throw new DatabaseError(`Error on get one advert by id, error: ${error}`);
     }
