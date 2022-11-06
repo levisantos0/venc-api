@@ -46,5 +46,12 @@ export const AdvertsRouters = () => {
       await controller.update(req, res)
   );
 
+  router.delete(
+    "/adverts/:id",
+    ensureAuthenticatedMiddleware.ensureAuthenticated,
+    async (req: Request, res: Response, next: NextFunction) =>
+      await controller.delete(req, res)
+  );
+
   return router;
 };

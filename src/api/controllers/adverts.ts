@@ -41,4 +41,10 @@ export class AdvertsController {
     await this.logic.update(data, id);
     return res.status(204).json();
   }
+
+  async delete(req: Request, res: Response) {
+    const { id } = req.params as any;
+    await this.logic.delete(id);
+    return res.status(204).json();
+  }
 }

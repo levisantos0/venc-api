@@ -9,9 +9,11 @@ import { SearchParams } from "../interface/serachParams";
 @Service()
 export class AdvertsRepository {
   private repository: Repository<Adverts>;
+  private advertsImagesRepository: Repository<AdvertsImages>;
 
   constructor() {
     this.repository = getRepository(Adverts);
+    this.advertsImagesRepository = getRepository(AdvertsImages);
   }
 
   async save(data, filesNames, userId: string): Promise<any> {
@@ -33,7 +35,7 @@ export class AdvertsRepository {
             fileName,
             advertId: advert.raw[0].id,
           }));
-          console.log({ imagesToInsert, advert: advert.raw[0].id });
+
           transaction
             .createQueryBuilder()
             .insert()
@@ -103,11 +105,47 @@ export class AdvertsRepository {
       await this.repository
         .createQueryBuilder()
         .update(data)
-        .where(`id = :id`, { id: advertId })
+        .where(`id = :id and userId = :userId`, { id: advertId, userId })
         .returning("*")
         .execute();
     } catch (error) {
-      throw new Error(`Error on save adverts, error: ${error}`);
+      throw new DatabaseError(`Error on update adverts, error: ${error}`);
+    }
+  }
+
+  async delete(userId: string, advertId: string): Promise<AdvertsImages[]> {
+    try {
+      const advertsImages = await this.repository.manager.transaction(
+        async (transaction) => {
+          const advert = await this.repository.findOneOrFail({
+            where: {
+              id: advertId,
+              userId,
+            },
+          });
+
+          const advertsImages = await this.advertsImagesRepository.find({
+            where: {
+              advertId: advert.id,
+            },
+          });
+
+          await this.repository.softDelete(advert.id);
+
+          await transaction
+            .createQueryBuilder()
+            .delete()
+            .from(AdvertsImages)
+            .where(`advert_id = :advertId`, {
+              advertId: advert.id,
+            })
+            .execute();
+          return advertsImages;
+        }
+      );
+      return advertsImages;
+    } catch (error) {
+      throw new DatabaseError(`Error on delete adverts, error: ${error}`);
     }
   }
 }

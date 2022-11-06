@@ -44,3 +44,9 @@ export class DatabaseError extends ApiError {
     super(message, 500, previousError);
   }
 }
+
+export class LogicError extends ApiError {
+  constructor(message: string, previousError?: Error) {
+    super(message, 500, previousError);
+  }
+}

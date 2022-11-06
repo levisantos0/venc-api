@@ -4,6 +4,9 @@ import { AuthHelper } from "../helpers/authHelper";
 import { Advert } from "../interface/Advert";
 import { ApiEnv } from "../../config/envs/api-envs";
 import { SearchParams } from "../interface/serachParams";
+import { unlinkSync } from "fs";
+import path from "path";
+import { LogicError } from "../helpers/api-erros";
 
 @Service()
 export class AdvertsLogic {
@@ -52,5 +55,17 @@ export class AdvertsLogic {
   async update(data: Advert, advertId: string) {
     const { user } = await this.authHelper.user();
     await this.repository.update(data, user.id, advertId);
+  }
+
+  async delete(advertId: string) {
+    try {
+      const { user } = await this.authHelper.user();
+      const result = await this.repository.delete(user.id, advertId);
+      result.map((image) =>
+        unlinkSync(path.resolve("uploads", image.fileName))
+      );
+    } catch (error) {
+      throw new LogicError(`Error on delete adverts logic, error: ${error}`);
+    }
   }
 }
