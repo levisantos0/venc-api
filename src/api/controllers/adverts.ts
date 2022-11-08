@@ -25,6 +25,10 @@ export class AdvertsController {
       query.perPage = Number(query.perPage);
     }
 
+    if (query.categoryId) {
+      query.categoryId = Number(query.categoryId);
+    }
+
     const response = await this.logic.getAll(query);
     return res.status(200).json(response);
   }
