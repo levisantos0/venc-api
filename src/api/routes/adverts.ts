@@ -33,6 +33,13 @@ export const AdvertsRouters = () => {
   );
 
   router.get(
+    "/adverts-by-user",
+    ensureAuthenticatedMiddleware.ensureAuthenticated,
+    async (req: Request, res: Response, next: NextFunction) =>
+      await controller.getByUser(req, res)
+  );
+
+  router.get(
     "/adverts/:id",
     ensureAuthenticatedMiddleware.ensureAuthenticated,
     async (req: Request, res: Response, next: NextFunction) =>

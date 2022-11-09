@@ -33,6 +33,11 @@ export class AdvertsController {
     return res.status(200).json(response);
   }
 
+  async getByUser(req: Request, res: Response) {
+    const response = await this.logic.getByUser();
+    return res.status(200).json(response);
+  }
+
   async getOneById(req: Request, res: Response) {
     const { id } = req.params as any;
     const response = await this.logic.getOneById(id);

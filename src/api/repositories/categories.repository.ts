@@ -13,7 +13,7 @@ export class CategoriesRepository {
 
   async getAll(): Promise<Categories[]> {
     try {
-      const categories = await this.repository.find();
+      const categories = await this.repository.find({ order: { name: "ASC" } });
       return categories;
     } catch (error) {
       throw new DatabaseError(`Error on get all categories, error: ${error}`);

@@ -91,7 +91,20 @@ export class AdvertsRepository {
     }
   }
 
-  async getOneById(id: number) {
+  async getByUser(userId: string): Promise<Adverts[]> {
+    try {
+      const advert = this.repository
+        .createQueryBuilder("adv")
+        .leftJoinAndSelect("adv.advertsImages", "advertsImages")
+        .leftJoinAndSelect("adv.category", "categories")
+        .where("adv.userId = :userId", { userId });
+      return await advert.getMany();
+    } catch (error) {
+      throw new DatabaseError(`Error on get one advert by id, error: ${error}`);
+    }
+  }
+
+  async getOneById(id: number): Promise<Adverts[]> {
     try {
       const advert = this.repository
         .createQueryBuilder("adv")

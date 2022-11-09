@@ -25,6 +25,12 @@ export class AdvertsLogic {
     return advert;
   }
 
+  async getByUser() {
+    const { user } = await this.authHelper.user();
+    const advert = await this.repository.getByUser(user.id);
+    return advert;
+  }
+
   async getAll(searchParams: SearchParams) {
     const result = await this.repository.getAll(searchParams);
 
