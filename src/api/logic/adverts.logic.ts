@@ -27,8 +27,15 @@ export class AdvertsLogic {
 
   async getByUser() {
     const { user } = await this.authHelper.user();
-    const advert = await this.repository.getByUser(user.id);
-    return advert;
+    const result = await this.repository.getByUser(user.id);
+    const resultMaped = result.map((advert) => ({
+      ...advert,
+      advertsImages: advert.advertsImages.map(
+        ({ fileName }) => `${ApiEnv.vencServiceUrl}/files/${fileName}`
+      ),
+      category: advert.category.name,
+    })) as any;
+    return resultMaped;
   }
 
   async getAll(searchParams: SearchParams) {
