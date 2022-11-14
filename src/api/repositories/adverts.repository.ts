@@ -51,7 +51,7 @@ export class AdvertsRepository {
   }
 
   async getAll(searchParams: SearchParams): Promise<PaginatedResult<Adverts>> {
-    let { page, perPage, sortByPrice, categoryId } = searchParams;
+    let { page, perPage, sortByPrice, categoryId, title } = searchParams;
     try {
       const query = this.repository
         .createQueryBuilder("adv")
@@ -59,8 +59,12 @@ export class AdvertsRepository {
         .leftJoinAndSelect("adv.category", "categories")
         .orderBy("adv.createdAt", "DESC");
 
+      if (title) {
+        query.andWhere("adv.title ilike '%' || :title || '%'", { title });
+      }
+
       if (categoryId) {
-        query.where("adv.categoryId = :categoryId", { categoryId });
+        query.andWhere("adv.categoryId = :categoryId", { categoryId });
       }
 
       if (sortByPrice) {
