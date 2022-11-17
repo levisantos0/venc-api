@@ -1,6 +1,6 @@
 export interface SearchParams {
   title: string;
-  sortByPrice?: "ASC" | "DESC";
+  orderBy: { sortByPrice?: "ASC" | "DESC" };
   page?: number;
   perPage?: number;
   categoryId?: number;

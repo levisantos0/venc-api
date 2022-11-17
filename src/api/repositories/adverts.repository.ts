@@ -51,13 +51,13 @@ export class AdvertsRepository {
   }
 
   async getAll(searchParams: SearchParams): Promise<PaginatedResult<Adverts>> {
-    let { page, perPage, sortByPrice, categoryId, title } = searchParams;
+    let { page, perPage, orderBy, categoryId, title } = searchParams;
+
     try {
       const query = this.repository
         .createQueryBuilder("adv")
         .leftJoinAndSelect("adv.advertsImages", "advertsImages")
-        .leftJoinAndSelect("adv.category", "categories")
-        .orderBy("adv.createdAt", "DESC");
+        .leftJoinAndSelect("adv.category", "categories");
 
       if (title) {
         query.andWhere("adv.title ilike '%' || :title || '%'", { title });
@@ -67,8 +67,10 @@ export class AdvertsRepository {
         query.andWhere("adv.categoryId = :categoryId", { categoryId });
       }
 
-      if (sortByPrice) {
-        query.orderBy(`adv.price`, sortByPrice);
+      if (orderBy) {
+        query.orderBy(`adv.price`, orderBy.sortByPrice);
+      } else {
+        query.orderBy(`adv.created_at`, "DESC");
       }
 
       if (page && perPage) {
